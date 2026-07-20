@@ -1,0 +1,29 @@
+# Node Dependencies
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Python Environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Databases and Secrets
+*.db
+.env
+.env.example
+.env*.local
+
+# IDEs & System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

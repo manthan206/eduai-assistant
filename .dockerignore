@@ -1,0 +1,33 @@
+# Ignore VCS
+.git/
+.gitignore
+
+# Ignore Node.js build cache and dependencies
+**/node_modules/
+**/dist/
+**/build/
+.npm/
+
+# Ignore Python virtual environments and caches
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.venv/
+**/venv/
+**/env/
+
+# Ignore local database files and keys
+**/*.db
+**/*.db-journal
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore docs and metadata
+artifacts/
+*.md
+.vscode/
+.idea/

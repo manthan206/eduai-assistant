@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply selection:bg-brand-500/30 selection:text-brand-900 dark:selection:text-brand-100;
+  }
+}
+
+/* Custom Webkit scrollbar for premium look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.25);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.4);
+}
+
+/* Glassmorphism utility styles */
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glass-panel-dark {
+  background: rgba(13, 13, 24, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Background animated mesh styles */
+.gradient-bg-mesh {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.8;
+  filter: blur(80px);
+}
+
+.gradient-sphere-1 {
+  position: absolute;
+  background: radial-gradient(circle, rgba(59, 92, 250, 0.25) 0%, rgba(59, 92, 250, 0) 70%);
+  width: 50vw;
+  height: 50vw;
+  top: -10vw;
+  left: -10vw;
+  animation: float-slow 20s infinite alternate;
+}
+
+.gradient-sphere-2 {
+  position: absolute;
+  background: radial-gradient(circle, rgba(148, 80, 255, 0.2) 0%, rgba(148, 80, 255, 0) 70%);
+  width: 60vw;
+  height: 60vw;
+  bottom: -20vw;
+  right: -10vw;
+  animation: float-slow-reverse 25s infinite alternate;
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(8vw, 5vw) scale(1.1);
+  }
+}
+
+@keyframes float-slow-reverse {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-6vw, -8vw) scale(0.9);
+  }
+}
+
+/* Markdown Customizations */
+.prose-custom {
+  @apply text-gray-800 dark:text-gray-200 leading-relaxed;
+}
+
+.prose-custom p {
+  @apply mb-4;
+}
+
+.prose-custom h1, .prose-custom h2, .prose-custom h3, .prose-custom h4 {
+  @apply font-semibold text-gray-900 dark:text-white mt-6 mb-3;
+}
+
+.prose-custom h1 { @apply text-2xl; }
+.prose-custom h2 { @apply text-xl; }
+.prose-custom h3 { @apply text-lg; }
+
+.prose-custom pre {
+  @apply my-4 rounded-xl overflow-hidden shadow-md;
+}
+
+.prose-custom code {
+  @apply font-mono text-sm px-1.5 py-0.5 rounded bg-gray-100 dark:bg-dark-800 text-brand-600 dark:text-brand-400 font-semibold;
+}
+
+.prose-custom pre code {
+  @apply block p-0 bg-transparent text-current font-normal;
+}
+
+.prose-custom ul, .prose-custom ol {
+  @apply pl-6 mb-4 list-outside;
+}
+
+.prose-custom ul {
+  @apply list-disc;
+}
+
+.prose-custom ol {
+  @apply list-decimal;
+}
+
+.prose-custom li {
+  @apply mb-1.5;
+}
+
+.prose-custom blockquote {
+  @apply pl-4 border-l-4 border-brand-500 italic my-4 text-gray-600 dark:text-gray-400;
+}
+
+.prose-custom table {
+  @apply w-full border-collapse my-4 text-sm text-left;
+}
+
+.prose-custom th {
+  @apply font-semibold p-2 border-b-2 border-gray-200 dark:border-dark-700 bg-gray-50 dark:bg-dark-850;
+}
+
+.prose-custom td {
+  @apply p-2 border-b border-gray-100 dark:border-dark-800;
+}
+
+/* Typing cursor animation */
+.typing-cursor::after {
+  content: "▊";
+  display: inline-block;
+  color: rgb(59, 92, 250);
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  from, to { color: transparent }
+  50% { color: rgb(59, 92, 250) }
+}
