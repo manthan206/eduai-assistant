@@ -1,6 +1,7 @@
 import os
 import json
 import asyncio
+import httpx
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from typing import List, Dict, Any, AsyncGenerator
@@ -29,6 +30,7 @@ def get_llm_client():
     """
     Dynamically re-reads .env variables and returns an initialized AsyncOpenAI client
     configured for Groq Cloud API (or OpenAI fallback).
+    Uses custom httpx.AsyncClient to bypass httpx version kwargs collisions.
     """
     load_dotenv(override=True)
     groq_key = os.getenv("GROQ_API_KEY", "").strip()
@@ -45,7 +47,16 @@ def get_llm_client():
         base_url = os.getenv("OPENAI_API_BASE_URL", None)
         provider = "openai"
         
-    client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+    http_client = httpx.AsyncClient(
+        timeout=httpx.Timeout(60.0, connect=10.0),
+        follow_redirects=True
+    )
+    
+    client = AsyncOpenAI(
+        api_key=api_key, 
+        base_url=base_url,
+        http_client=http_client
+    )
     return client, provider
 
 async def get_mock_stream(prompt: str) -> AsyncGenerator[str, None]:
