@@ -238,6 +238,11 @@ export default function DashboardPage({ darkMode, setDarkMode }) {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('eduai_token');
+          window.location.href = '/login';
+          return;
+        }
         const errJson = await response.json();
         throw new Error(errJson.detail || "Server error occurred");
       }
