@@ -1,13 +1,37 @@
+import os
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
-from backend.database.connection import engine, Base
+from backend.database.connection import engine, Base, SessionLocal
+from backend.models.models import User
+from backend.auth.security import get_password_hash
 from backend.routers import auth, chat, health
 
 # Create SQLite database tables on startup
 Base.metadata.create_all(bind=engine)
+
+# Auto-seed default demo account on startup if database is fresh (e.g. after Render container sleep)
+def seed_default_users():
+    db = SessionLocal()
+    try:
+        if db.query(User).filter(User.email == "demo@eduai.com").first() is None:
+            demo_user = User(
+                name="Edu Learner",
+                email="demo@eduai.com",
+                password_hash=get_password_hash("Password123!")
+            )
+            db.add(demo_user)
+            db.commit()
+    except Exception as e:
+        print("Database seed notice:", e)
+    finally:
+        db.close()
+
+seed_default_users()
 
 app = FastAPI(
     title="EduAI Assistant API",
@@ -18,7 +42,7 @@ app = FastAPI(
 # Configure CORS to support frontend dev servers and deployment setups
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust in production as needed
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,24 +54,16 @@ app.include_router(chat.router)
 app.include_router(health.router)
 
 # Serve React static assets in production if built
-import os
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
-# Check if static directory exists (where React builds are placed)
 if os.path.exists("static") or os.path.exists("backend/static"):
     static_dir = "static" if os.path.exists("static") else "backend/static"
-    # Mount assets folder for bundle styles/scripts
     if os.path.exists(os.path.join(static_dir, "assets")):
         app.mount("/assets", StaticFiles(directory=os.path.join(static_dir, "assets")), name="assets")
     
     @app.get("/{catchall:path}")
     async def serve_react_app(catchall: str):
-        # If it's a request for an existing static file, return it
         file_path = os.path.join(static_dir, catchall)
         if os.path.exists(file_path) and os.path.isfile(file_path):
             return FileResponse(file_path)
-        # Otherwise, fall back to index.html to support React Router client-side routing
         return FileResponse(os.path.join(static_dir, "index.html"))
 
 # Custom Exception Handler for global error handling
@@ -60,4 +76,3 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-
