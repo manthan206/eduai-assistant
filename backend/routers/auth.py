@@ -32,8 +32,11 @@ class TokenResponse(BaseModel):
 
 @router.post("/register", response_model=UserResponse)
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
+    clean_email = user_data.email.strip().lower()
+    clean_name = user_data.name.strip()
+    
     # Check if user already exists
-    existing_user = db.query(User).filter(User.email == user_data.email).first()
+    existing_user = db.query(User).filter(User.email == clean_email).first()
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -41,10 +44,10 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
         )
     
     # Hash password and create user
-    hashed_pwd = get_password_hash(user_data.password)
+    hashed_pwd = get_password_hash(user_data.password.strip())
     new_user = User(
-        name=user_data.name,
-        email=user_data.email,
+        name=clean_name,
+        email=clean_email,
         password_hash=hashed_pwd
     )
     db.add(new_user)
@@ -54,8 +57,11 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 def login(login_data: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == login_data.email).first()
-    if not user or not verify_password(login_data.password, user.password_hash):
+    clean_email = login_data.email.strip().lower()
+    clean_password = login_data.password.strip()
+    
+    user = db.query(User).filter(User.email == clean_email).first()
+    if not user or not verify_password(clean_password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",

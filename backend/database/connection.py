@@ -7,6 +7,12 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./eduai.db")
 
 # SQLite needs connect_args={"check_same_thread": False} to be used in multithreaded environments like FastAPI
 if DATABASE_URL.startswith("sqlite"):
+    # Ensure directory exists if path includes subfolder
+    db_file_path = DATABASE_URL.replace("sqlite:///", "")
+    db_dir = os.path.dirname(db_file_path)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
+        
     engine = create_engine(
         DATABASE_URL, connect_args={"check_same_thread": False}
     )
